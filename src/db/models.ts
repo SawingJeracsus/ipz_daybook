@@ -30,7 +30,8 @@ export interface Homework extends Model{
     task: string,
     author: number,
     discipline: number,
-    description: string
+    description: string,
+    deadline: string
 }
 
 export interface Discipline extends Model{
@@ -166,8 +167,8 @@ export const models: {
         deadline: {
             name: 'deadline',
             length: 128,
-            sqlType: "INT",
-            jsType: Number,
+            sqlType: "VARCHAR",
+            jsType: String,
             required: true
         }
     },

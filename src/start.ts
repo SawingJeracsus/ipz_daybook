@@ -7,17 +7,23 @@ const db = new DataBaseBus();
 
 export const startHandler = ( bot: Telegraf ) => {
     bot.start( async ( ctx ) => {
-        ctx.reply(`Welcome to the club, buddy!
+
+        if((await db.find<User>('user', {telegram_id: ctx.from.id.toString()})).length === 0){
+            ctx.reply(`Welcome to the club, buddy!
 Я бот який допомагає не забути що там задали і звільняє від потреби спамити в чат групи з питанням: "А як звуть..."
 Поки я записую тебе в свій журнал - ознайомся з командами (/help) ! 
 `)
-        const user = db.getModel<User>('user') as User;
-        user.telegram_id = ctx.from.id.toString();
-        user.username = ctx.from.username || 'Анонімус';
 
-        await user.save()
+            const user = db.getModel<User>('user') as User;
+            user.telegram_id = ctx.from.id.toString();
+            user.username = ctx.from.username || 'Анонімус';
 
-        ctx.reply(`Все, я тебе записав! Буду тобі вдячний, якщо ти даси мені свій email і номер телефону. Це можна зробить за допомогою /contacts`)
+            await user.save()
+
+            ctx.reply(`Все, я тебе записав! Буду тобі вдячний, якщо ти даси мені свій email і номер телефону. Це можна зробить за допомогою /contacts`)
+        }
+
+
     } )
 
     bot.command("contacts", async (ctx) => {

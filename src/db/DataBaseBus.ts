@@ -140,7 +140,7 @@ export class DataBaseBus {
                         SET ${
                             Object.entries(this.config)
                             .filter( ([key, _]) => key !== "id" )
-                            .map( ([_, value]) => `${value.name}=${typeof value.value === "number" ? value.value : `"${value.value}"`}` )
+                            .map( ([_, value]) => `${value.name}=${typeof value.value === "number" ? value.value : `"${value.value.replace(/"/g, '\\"')}"`}` )
                             .join(', ')
                         }
                         WHERE id = ${this.config.id.value}
@@ -156,7 +156,7 @@ export class DataBaseBus {
                         if(field.jsType === Number){
                             return field.value.toString()
                         }else{
-                            return `"${field.value}"`
+                            return `"${field.value.replace(/"/g, '\\"')}"`
                         }
                     })
                     .join(', ')}
@@ -177,7 +177,7 @@ export class DataBaseBus {
                     await conn.query(`
                         DELETE FROM ${modelName}
                         WHERE
-                        id = ${this.config.id}
+                        id = ${this.config.id.value}
                     `)
                 }
             }
