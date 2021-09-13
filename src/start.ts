@@ -32,9 +32,15 @@ export const startHandler = ( bot: Telegraf ) => {
             email: "Супер! Тепер кидай свій email!"
         }, ctx.message.chat.id, async (data) => {
             const user = (await db.find<User>('user', {telegram_id: ctx.from.id.toString()}))[0]
-            user.phone_number = parseInt(data.phone_num, 10);
-            user.email = data.email
-            await db.getModel('user', user)?.save();
+            const userModel =  db.getModel('user', user) as User;
+            try{
+                userModel.phone_number = data.phone_num;
+                userModel.email = data.email
+                await  userModel.save()
+            }catch (e) {
+                ctx.reply("Дані не валідні")
+                return
+            }
             ctx.reply("Все! Я запам'ятав твої контакти! Тепер не викрутишся!)");
         })
     })

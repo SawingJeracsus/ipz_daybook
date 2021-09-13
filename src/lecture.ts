@@ -13,7 +13,7 @@ export const startLectureHandler = (bot: Telegraf) => {
             phone_number: "Тепер кинь його номер телефону,його також можна глянуть в тімсі!",
         }, ctx.message.chat.id, async (data) => {
             const lecture = db.getModel<Lecture>('lecture') as Lecture;
-            lecture.phone_number = parseInt(data.phone_number, 10);
+            lecture.phone_number = data.phone_number;
             lecture.email = data.email;
             lecture.name = data.name;
 
@@ -24,6 +24,7 @@ export const startLectureHandler = (bot: Telegraf) => {
     })
     bot.command('/get_lectures', async (ctx) => {
         const lectures = await db.find<Lecture>('lecture', {})
-        ctx.reply(lectures.map(lecture => `${lecture.name}\n${lecture.phone_number}\n${lecture.email}`).join('\n\n'));
+        console.log(lectures)
+        ctx.reply(lectures.map(lecture => `${lecture.name}\n${lecture.phone_number}\n${lecture.email}`).join('\n\n') || "Поки лекторів ще немає");
     })
 }

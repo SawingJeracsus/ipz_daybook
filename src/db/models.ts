@@ -23,7 +23,7 @@ export interface User extends Model{
     telegram_id: string,
     username: string,
     email: string,
-    phone_number: number,
+    phone_number: string,
 }
 
 export interface Homework extends Model{
@@ -42,7 +42,7 @@ export interface Discipline extends Model{
 export interface Lecture extends Model{
     name: string,
     email: string,
-    phone_number: number
+    phone_number: string
 }
 
 export const models: {

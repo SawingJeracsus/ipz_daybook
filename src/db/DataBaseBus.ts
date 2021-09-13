@@ -76,7 +76,6 @@ export class DataBaseBus {
         if(!modelTemplate){
             return []
         }
-
         const conn = await this.getConnection();
         const dbres = await conn.query(`
             SELECT
@@ -140,7 +139,7 @@ export class DataBaseBus {
                         SET ${
                             Object.entries(this.config)
                             .filter( ([key, _]) => key !== "id" )
-                            .map( ([_, value]) => `${value.name}=${typeof value.value === "number" ? value.value : `"${value.value.replace(/"/g, '\\"')}"`}` )
+                            .map( ([_, value]) => `${value.name}=${typeof value.value === "number" ? value.value : `"${value?.value?.replace(/"/g, '\\"')}"` || ""}` )
                             .join(', ')
                         }
                         WHERE id = ${this.config.id.value}
@@ -156,7 +155,7 @@ export class DataBaseBus {
                         if(field.jsType === Number){
                             return field.value.toString()
                         }else{
-                            return `"${field.value.replace(/"/g, '\\"')}"`
+                            return `"${field?.value?.replace ? field?.value?.replace(/"/g, '\\"') : ""}"`
                         }
                     })
                     .join(', ')}
@@ -201,14 +200,15 @@ export class DataBaseBus {
                     return false
                 }
 
+                let validatorsResult = true
                 if(target.config[prop]?.validators){
                     // @ts-ignore
-                    target.config[prop]?.validators.forEach(validator => {
+                    for (let validator of target.config[prop]?.validators ){
                         if(!validator(value)){
                             console.error('value not path validators')
-                            return false
+                            validatorsResult = false
                         }
-                    })
+                    }
                 }
 
                 if( value.toString().length > target.config[prop].length){
@@ -216,9 +216,11 @@ export class DataBaseBus {
                     return false
                 }
 
-                target.config[prop].value = value
+                if(validatorsResult){
+                    target.config[prop].value = value
+                }
 
-                return true
+                return true && validatorsResult
             },
             get(target, prop){
                 if(typeof prop !== 'string'){

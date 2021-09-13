@@ -1,7 +1,7 @@
 import {Telegraf, Markup} from "telegraf";
 
 export class SelectManager {
-    static subscribers: Array<{chatId: number, callBack: (selected: string) => void, messageId: number}> = []
+    static subscribers: Array<{chatId: number, callBack: (selected: string) => void, messageId: number, answers: string[]}> = []
     static bot: Telegraf
 
     static async select (chatId: number, question: string, variants: string[], onSelect: (selected: string) => void ) {
@@ -28,7 +28,8 @@ export class SelectManager {
         this.subscribers.push({
             chatId,
             callBack: onSelect,
-            messageId: message.message_id
+            messageId: message.message_id,
+            answers: variants
         })
     }
 
@@ -36,8 +37,12 @@ export class SelectManager {
         const handler = this.subscribers.find(handler => handler.chatId === chatId);
         if(handler){
             await this.bot.telegram.deleteMessage(handler.chatId, handler.messageId);
-            handler.callBack(answer)
             this.subscribers = this.subscribers.filter(handler => handler.chatId !== chatId)
+            if(handler.answers.includes(answer)){
+                handler.callBack(answer)
+            }else{
+                this.bot.telegram.sendMessage(chatId, 'Ти спробував мене зламати клацнувщи на попередні кнопочки?) Гарна спроба, але ні!')
+            }
         }
     }
 }
