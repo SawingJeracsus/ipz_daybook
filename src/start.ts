@@ -25,7 +25,17 @@ export const startHandler = ( bot: Telegraf ) => {
 
 
     } )
-
+    bot.command('/help', ctx => {
+        ctx.reply(`/start - Отримати привітальне повідомлення
+/help - відкрити цей список
+/mk_lecture - додати лектора до списку
+/get_lectures - отримати список лекторів
+/mk_discipline - додати дисципліну до списку
+/get_disciplines - отримати список дисциплін
+/add_hw - додати нове завдання
+/get_hw - отримати список завдань
+/rm_hw - видалити завдання`)
+    })
     bot.command("contacts", async (ctx) => {
         PromptManager.collectData({
             phone_num: "Записую твої контакти для потомків... Кидай сюди свій номер телефону!",

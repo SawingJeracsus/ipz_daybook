@@ -19,11 +19,11 @@ export class DataBaseBus {
                 })
 
             const pool = mariadb.createPool({
-                host: '127.0.0.1',
+                host:  process.env.DB_HOST || '127.0.0.1',
                 user: process.env.DB_USERNAME || 'root',
-                port: parseInt(process.env.DB_PORT || '25565', 10),
                 password: process.env.DB_PASSWORD
             })
+
             const conn = await pool.getConnection();
             await conn.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\` `)
             await conn.query(`USE \`${process.env.DB_NAME}\` `)
