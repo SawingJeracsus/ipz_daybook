@@ -25,6 +25,9 @@ build:
     volumes:
       - maria-data:/data/db
 
+  run:
+    bot: "npm run start"
+
 networks:
   docker-service:
     driver: bridge

@@ -24,6 +24,11 @@ services:
       - docker-service
     volumes:
       - maria-data:/data/db
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
 
 networks:
   docker-service:
